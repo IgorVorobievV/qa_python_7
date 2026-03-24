@@ -1,51 +1,59 @@
-import requests, pytest, allure
+import pytest, allure
+
+from generators import *
 
 class TestDeleteCourier:  
 
-    #неуспешный запрос возвращает соответствующую ошибку;
+    #неуспешный запрос возвращает соответствующую ошибку
     @allure.title('Проверить, что неуспешный запрос возвращает соответствующую ошибку')
-    @allure.description('Проверить, что текст ответа содержит "Недостаточно данных для удаления курьера." при отсутствующем id курьера и "Курьера с таким id нет." при несуществующим id курьера')
-    @pytest.mark.parametrize('id, error', [['', 'Недостаточно данных для удаления курьера.'],[1, 'Курьера с таким id нет.']])
-    def test_delete_courier_wrong_data_right_error(self, id, error):
+    @allure.description('Проверить, что код ответа 400 при отсутствующем id курьера и 404 при несуществующим id курьера')
+    @pytest.mark.parametrize('id, code', [['', 400],[1, 404]])
+    def test_delete_courier_wrong_data_right_error(self, id, code):
 
-        # отправляем запрос на удаление курьера и сохраняем ответ в переменную response
-        response = requests.delete(f'https://qa-scooter.praktikum-services.ru/api/v1/courier/{id}')
+        with allure.step("Отправляем запрос на удаление курьера и сохраняем ответ в переменную response."):
+            response = request_courier_delete(id)
 
-        assert response.json()['message'] == error
+        with allure.step(f"Проверка, что ответ с соответствующим кодом {code}."):
+            assert response.status_code == code
         
-    #успешный запрос возвращает {"ok":true};
+    #успешный запрос возвращает {"ok":true}
     @allure.title('Проверить, что успешный запрос возвращает "ok":true')
     @allure.description('Проверить, что текст ответа содержит "ok":true')
-    def test_delete_courier_success_request_right_answer(self, courier_data_gen):
+    def test_delete_courier_success_request_right_answer(self):
         
-        # отправляем запрос на регистрацию курьера
-        requests.post('https://qa-scooter.praktikum-services.ru/api/v1/courier', data=courier_data_gen)
+        with allure.step("Генерируем логин, пароль и имя курьера."):
+            payload = generate_courier_data_and_return_payload()
 
-        # отправляем запрос на вход курьера и сохраняем ответ в переменную response
-        response = requests.post('https://qa-scooter.praktikum-services.ru/api/v1/courier/login', data=courier_data_gen)
+        with allure.step("Отправляем запрос на регистрацию курьера."):
+            request_courier_create(payload)
+        
+        with allure.step("Отправляем запрос на авторизацию созданного курьера и сохраняем id."):
+            id = request_courier_login(payload).json()['id']
 
-        # получаем id созданного курьера
-        id = response.json()['id']
+        with allure.step("Отправляем запрос на удаление курьера и сохраняем ответ в переменную response."):
+            response = request_courier_delete(id)
 
-        # отправляем запрос на удаление курьера и сохраняем ответ в переменную response2
-        response2 = requests.delete(f'https://qa-scooter.praktikum-services.ru/api/v1/courier/{id}')
+        with allure.step('Проверяем, что текст ответа {"ok":true}'):
+            assert response.text == '{"ok":true}'
 
-        assert response2.text == '{"ok":true}'
-
-    #если отправить запрос без id, вернётся ошибка;
+    #если отправить запрос без id, вернётся ошибка
     @allure.title('Проверить, что если отправить запрос без id, вернётся ошибка')
     @allure.description('Проверить, что ответ содержит "message"')
     def test_delete_courier_without_id_error(self):
-        # отправляем запрос на удаление курьера и сохраняем ответ в переменную response
-        response = requests.delete(f'https://qa-scooter.praktikum-services.ru/api/v1/courier/')
 
-        assert 'message' in response.json()
+        with allure.step("Отправляем запрос на удаление курьера без id и сохраняем ответ в переменную response."):
+            response = request_courier_delete('')
 
-    #если отправить запрос с несуществующим id, вернётся ошибка.
+        with allure.step("Проверка, что ответ содержит message."):
+            assert 'message' in response.json()
+
+    #если отправить запрос с несуществующим id, вернётся ошибка
     @allure.title('Проверить, что если отправить запрос с несуществующим id, вернётся ошибка')
     @allure.description('Проверить, что ответ содержит "message"')
     def test_delete_courier_nonexistent_id_error(self):
-        # отправляем запрос на удаление курьера и сохраняем ответ в переменную response
-        response = requests.delete(f'https://qa-scooter.praktikum-services.ru/api/v1/courier/1')
 
-        assert 'message' in response.json()
+        with allure.step("Отправляем запрос на удаление курьера с id=1 и сохраняем ответ в переменную response."):
+            response = request_courier_delete(1)
+
+        with allure.step("Проверка, что ответ содержит message."):
+            assert 'message' in response.json()
