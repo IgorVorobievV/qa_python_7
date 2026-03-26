@@ -10,7 +10,7 @@ class TestOrderGetList:
 
         with allure.step("Отправляем запрос на список заказов и сохраняем ответ в переменную response."):
             response = request_order_get_list()
-            
-        with allure.step("Проверка, что ответ содержит orders."):
-            assert 'orders' in response.json()
+
+        with allure.step("Проверка, что ответ содержит orders и имеет код 200."):
+            assert response.status_code == 200 and 'orders' in response.text
         

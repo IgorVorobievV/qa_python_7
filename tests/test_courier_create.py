@@ -26,7 +26,7 @@ class TestCreateCourier:
             response = request_courier_create(courier_create_and_delete)
 
         with allure.step("Проверка, что код ответа не равен 201."):
-            assert response.status_code != 201
+            assert response.status_code != 201 and response.text != '{"ok":true}'
 
     #чтобы создать курьера, нужно передать в ручку все обязательные поля
     @allure.title('Проверить, чтобы создать курьера, нужно передать в ручку все обязательные поля')
@@ -54,7 +54,7 @@ class TestCreateCourier:
             response = request_courier_create(courier_create_and_delete)
 
         with allure.step("Проверка, что возвращается ошибка и код ответа равен 400."):
-            assert response.status_code == 400 and 'message' in response.text
+            assert response.text == '{"code":400,"message":"Недостаточно данных для создания учетной записи"}'
 
     #если создать пользователя с логином, который уже есть, возвращается ошибка с правильным кодом 409;
     @allure.title('Проверить, что запрос возвращает ошибку и правильный код ответа 409')
@@ -68,4 +68,4 @@ class TestCreateCourier:
             response = request_courier_create(courier_create_and_delete)
 
         with allure.step("Проверка, что возвращается ошибка и код ответа равен 409."):
-            assert response.status_code == 409 and 'message' in response.text
+            assert response.text == '{"code":409,"message":"Этот логин уже используется. Попробуйте другой."}'

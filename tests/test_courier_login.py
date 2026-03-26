@@ -55,7 +55,7 @@ class TestCreateLogin:
             response = request_courier_login(payload)
 
         with allure.step("Проверка, что возвращается ошибка и код ответа равен 404."):
-            assert response.status_code == 404 and 'message' in response.text
+            assert response.text == '{"code":404,"message":"Учетная запись не найдена"}'
 
     #если какого-то поля нет, запрос возвращает ошибку
     @allure.title('Проверить, что если какого-то поля нет, запрос возвращает ошибку')
@@ -71,7 +71,7 @@ class TestCreateLogin:
             response = request_courier_login(payload)
 
         with allure.step("Проверка, что возвращается ошибка и код ответа равен 400."):
-            assert response.status_code == 400 and 'message' in response.text
+            assert response.text == '{"code":400,"message":"Недостаточно данных для входа"}'
 
     #если авторизоваться под несуществующим пользователем, запрос возвращает ошибку
     @allure.title('Проверить, что если авторизоваться под несуществующим пользователем, запрос возвращает ошибку')
@@ -88,4 +88,4 @@ class TestCreateLogin:
             response = request_courier_login(payload)
 
         with allure.step("Проверка, что возвращается ошибка и код ответа равен 404."):
-            assert response.status_code == 404 and 'message' in response.text
+            assert response.text == '{"code":404,"message":"Учетная запись не найдена"}'

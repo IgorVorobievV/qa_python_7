@@ -26,7 +26,7 @@ class TestTrackOrder:
         with allure.step("Отправляем запрос на отмену заказа."):
             requests.put(f'https://qa-scooter.praktikum-services.ru//api/v1/orders/cancel?track={order_track}')
         with allure.step('Проверка, что в ответе есть order.'):
-            assert 'order' in response.json()
+            assert 'order' in response.text and response.status_code == 200
 
     # запрос без номера заказа возвращает ошибку;
     @allure.title('Проверить, что запрос без номера заказа возвращает ошибку')
@@ -36,7 +36,7 @@ class TestTrackOrder:
         with allure.step("Отправляем запрос на получение заказа без трека и сохраняем ответ в переменную response."):
             response = requests.get(f'https://qa-scooter.praktikum-services.ru/api/v1/orders/track?t=')
         with allure.step('Проверка, что возвращается ошибка.'):
-            assert 'message' in response.json()
+            assert response.text == '{"code":400,"message":"Недостаточно данных для поиска"}'
 
     # запрос с несуществующим заказом возвращает ошибку.
     @allure.title('Проверить, что запрос с несуществующим заказом возвращает ошибку')
@@ -46,4 +46,4 @@ class TestTrackOrder:
         with allure.step("Отправляем запрос на получение заказа с треком 1 и сохраняем ответ в переменную response."):
             response = requests.get(f'https://qa-scooter.praktikum-services.ru/api/v1/orders/track?t=1')
         with allure.step('Проверка, что возвращается ошибка.'):
-            assert 'message' in response.json()
+            assert response.text == '{"code":404,"message":"Заказ не найден"}'

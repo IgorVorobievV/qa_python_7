@@ -1,3 +1,0 @@
-{'login': 'dahnreotbt', 'password': 'sfjinpjdqj', 'firstName': 'wdexgovtdl'}
-id 1
-courierId 724352
