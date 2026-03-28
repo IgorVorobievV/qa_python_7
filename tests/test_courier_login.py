@@ -10,7 +10,7 @@ class TestCreateLogin:
     @allure.description('Проверить, что код ответа 200 и возвращается id')
     def test_login_courier_valid_data_success(self):
         
-        with allure.step("Копируем тело запроса из данных"):
+        with allure.step("Копируем тело запроса из данных."):
             payload = courier_valid_data.copy()
 
         with allure.step("Отправляем запрос на авторизацию курьера и сохраняем ответ в переменную response."):
@@ -24,17 +24,17 @@ class TestCreateLogin:
     @allure.description('Проверить, что код ответа 200')
     def test_login_courier_only_login_error(self):
 
-        with allure.step("Копируем тело запроса из данных"):
+        with allure.step("Копируем тело запроса из данных."):
             payload = courier_valid_data.copy()
 
-        with allure.step("Удаляем из данных имя курьера"):
+        with allure.step("Удаляем из данных имя курьера."):
             payload.pop("firstName")
 
         with allure.step("Отправляем запрос на авторизацию курьера и сохраняем ответ в переменную response."):
             response = request_courier_login(payload)
 
-        with allure.step("Проверка, что код ответа равен 200."):
-            assert response.status_code == 200
+        with allure.step("Проверка, что код ответа равен 200 и возвращается id."):
+            assert response.status_code == 200 and 'id' in response.text
 
     #система вернёт ошибку, если неправильно указать логин или пароль
     @allure.title('Проверить, что система вернёт ошибку, если неправильно указать логин или пароль')
@@ -42,13 +42,13 @@ class TestCreateLogin:
     @pytest.mark.parametrize('data', [courier_valid_data['login'], courier_valid_data['password']])
     def test_login_courier_wrong_data_error(self, data):
 
-        with allure.step("Копируем тело запроса из данных"):
+        with allure.step("Копируем тело запроса из данных."):
             payload = courier_valid_data.copy()
 
-        with allure.step("Меняем логин в теле запроса"):
+        with allure.step("Меняем логин в теле запроса."):
             payload['login'] = data
 
-        with allure.step("Меняем пароль в теле запроса"):
+        with allure.step("Меняем пароль в теле запроса."):
             payload['password'] = data
 
         with allure.step("Отправляем запрос на авторизацию курьера и сохраняем ответ в переменную response."):
@@ -61,10 +61,10 @@ class TestCreateLogin:
     @allure.title('Проверить, что если какого-то поля нет, запрос возвращает ошибку')
     @allure.description('Проверить, что код ответа 400')
     def test_login_courier_only_password_error(self):
-        with allure.step("Копируем тело запроса из данных"):
+        with allure.step("Копируем тело запроса из данных."):
             payload = courier_valid_data.copy()
 
-        with allure.step("Удаляем из данных логин"):
+        with allure.step("Удаляем из данных логин."):
             payload.pop("login")
 
         with allure.step("Отправляем запрос на авторизацию курьера и сохраняем ответ в переменную response."):
@@ -78,10 +78,10 @@ class TestCreateLogin:
     @allure.description('Проверить, что код ответа 404')
     def test_login_courier_nonexistent_login_error(self):
 
-        with allure.step("Копируем тело запроса из данных"):
+        with allure.step("Копируем тело запроса из данных."):
             payload = courier_valid_data.copy()
 
-        with allure.step("Заменяем логин паролем"):
+        with allure.step("Заменяем логин паролем."):
             payload['login'] = courier_valid_data['password']
 
         with allure.step("Отправляем запрос на авторизацию курьера и сохраняем ответ в переменную response."):

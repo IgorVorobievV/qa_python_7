@@ -12,8 +12,9 @@ def courier_create_and_delete():
 
     with allure.step("Передаем тело запроса в тест."): 
         yield payload
-
+    
     try:
+
         with allure.step("Отпраляем запрос на авторизацию курьера и извлекаем id."):
             id = request_courier_login(payload).json()['id']
 
@@ -21,10 +22,10 @@ def courier_create_and_delete():
             request_courier_delete(id)
 
     except Exception as e:
-        print(f"Ошибка при очистке тестовых данных: {e}")
+        pass
 
 
-@pytest.fixture # 
+@pytest.fixture 
 def order_accept_and_delete():
 
     with allure.step("Создаем пустой словарь для передачи данных в тест."):
@@ -69,4 +70,20 @@ def order_accept_and_delete():
             request_courier_delete(result['courierId'])
 
     except Exception as e:
-        print(f"Ошибка при очистке тестовых данных: {e}")
+        pass
+
+@pytest.fixture 
+def order_make_and_delete():
+
+    with allure.step("Создаем track для передачи в тест."):
+        track = list()
+
+    with allure.step(f"Передаем track в тест."):
+        yield track
+        
+    try:
+        with allure.step("Отправляем запрос на отмену заказа."):
+            request_order_cancel(track[0])
+
+    except Exception as e:
+        pass

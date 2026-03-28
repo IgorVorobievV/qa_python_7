@@ -1,2 +1,0 @@
-{'login': 'owsfbtsehy', 'password': 'evrihvmrtb', 'firstName': 'flwghgbuzl'}
-Ошибка при очистке тестовых данных: Expecting value: line 1 column 1 (char 0)

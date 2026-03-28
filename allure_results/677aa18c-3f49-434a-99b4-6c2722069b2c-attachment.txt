@@ -1,1 +1,0 @@
-{'login': 'mudnrnkuts', 'password': 'dkpinerpjs', 'firstName': 'cdlzgmenbd'}
